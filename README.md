@@ -2,7 +2,7 @@
 CMS HGCal Testbeam Analysis Framework
 =============================================
 
-Cloned from http://cms-hgcal.github.io/TestBeam
+Cloned from https://github.com/CMS-HGCAL/TestBeam 
 
 Edited for my convinience. -Rohith
 
