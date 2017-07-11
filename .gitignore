@@ -1,0 +1,42 @@
+*.root
+*.log
+*~
+.svn
+#.gitignore
+
+# root compiled macros
+*_C.d
+*_C.so
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Compiled programs
+*.exe
+
+*#
+
+# python
+*.pyc
+*__init__.py
+
+# patch
+*.rej
+
+#For DQM scripts
+DQM/*_C*
+DQM/hgcalDQM_log
+DQM/hgcalDQM_log.old
+
+doc/doxygen
