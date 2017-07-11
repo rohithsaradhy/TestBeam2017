@@ -2,6 +2,8 @@
 CMS HGCal Testbeam Analysis Framework
 =============================================
 
+Note: This is for 5 Hexaboards connected.
+
 Cloned from https://github.com/CMS-HGCAL/TestBeam 
 
 Edited for my convinience. -Rohith
