@@ -6,7 +6,7 @@ import os,sys
 options = VarParsing.VarParsing('standard') # avoid the options: maxEvents, files, secondaryFiles, output, secondaryOutput because they are already defined in 'standard'
 #Change the data folder appropriately to where you wish to access the files from:
 options.register('dataFolder',
-                 '/afs/cern.ch/work/b/barneyd/public/data_May_2017/disk2_2TB/eudaq_data',
+                 '/afs/cern.ch/work/r/rsaradhy/public/RawData',
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  'folder containing raw input')
@@ -131,7 +131,7 @@ process.rechitplotter = cms.EDAnalyzer("RecHitPlotter",
 #process.p = cms.Path( process.rawhitproducer*process.rawhitplotter*process.pulseshapeplotter )
 #process.p = cms.Path( process.rawhitproducer*process.recHitNtuplizer )
 #process.p = cms.Path( process.rawhitproducer*process.rechitproducer)
-process.p = cms.Path( process.rawhitproducer*process.rechitproducer*process.rechitplotter*process.rawhitplotter )
+process.p = cms.Path( process.rawhitproducer*process.rechitproducer*process.rechitplotter)
 
 process.end = cms.EndPath(process.output)
 
