@@ -1,13 +1,12 @@
 
+CMS HGCal Testbeam Analysis Framework
+=============================================
+
 Cloned from http://cms-hgcal.github.io/TestBeam
 Edited for my convinience. -Rohith
 email-rohithsaradhy@gmail.com
 
 
-
-
-CMS HGCal Testbeam Analysis Framework
-=============================================
 * This new branch is to be used for analysing data from 2017 test beam. 
 * The code runs with the one layer data, and will need (major) updates when we will have more layers. 
 * This readme assumes one layer data.
