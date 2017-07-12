@@ -25,8 +25,8 @@ bool HGCalTBSkiroc2CMS::check()
   for( size_t j=0; j<HGCAL_TB_GEOMETRY::N_CHANNELS_PER_SKIROC; j++ ){
     uint16_t head=(m_data.at(j)&MASK_HEAD)>>4*3;
     if(head!=8&&head!=9){
-      std::cout << "ISSUE : we expected 8(1000) or 9(1001) for the adc header and I find " << head << std::endl;
-      return false;
+      //std::cout << "ISSUE : we expected 8(1000) or 9(1001) for the adc header and I find " << head << std::endl;
+      //return false;
     }
     for( size_t k=0; k<NUMBER_OF_SCA+1; k++){
       if( ((m_data.at(j+SCA_SHIFT*k)&MASK_HEAD)>>4*3)!=head ){
@@ -36,8 +36,8 @@ bool HGCalTBSkiroc2CMS::check()
     }
     head=(m_data.at(j+HGCAL_TB_GEOMETRY::N_CHANNELS_PER_SKIROC)&MASK_HEAD)>>4*3;
     if(head!=8&&head!=9){
-      std::cout << "ISSUE : we expected 8(1000) or 9(1001) for the adc header and I find " << head << std::endl;
-      return false;
+      //std::cout << "ISSUE : we expected 8(1000) or 9(1001) for the adc header and I find " << head << std::endl;
+      //return false;
     }
     for( size_t k=0; k<NUMBER_OF_SCA+1; k++){
       if( ((m_data.at(j+SCA_SHIFT*k+HGCAL_TB_GEOMETRY::N_CHANNELS_PER_SKIROC)&MASK_HEAD)>>4*3)!=head ){

@@ -57,6 +57,7 @@ private:
   TH1F* m_h_hgSum;
   TH1F* m_h_lgSum;
   TH1F* m_h_enSum;
+  TH1F* HistoHG;
 
   edm::EDGetTokenT<HGCalTBRecHitCollection> m_HGCalTBRecHitCollection;
 
@@ -76,7 +77,7 @@ RecHitPlotter::RecHitPlotter(const edm::ParameterSet& iConfig) :
   m_HGCalTBRecHitCollection = consumes<HGCalTBRecHitCollection>(iConfig.getParameter<edm::InputTag>("InputCollection"));
 
   m_evtID=0;
-  
+
   std::cout << iConfig.dump() << std::endl;
 }
 
@@ -93,18 +94,19 @@ void RecHitPlotter::beginJob()
   if (!io.load(fip.fullPath(), essource_.emap_)) {
     throw cms::Exception("Unable to load electronics map");
   };
-  
+
   usesResource("TFileService");
   edm::Service<TFileService> fs;
-  
-  m_h_mip[0]=fs->make<TH1F>("Mip_Ski0","Mip_Ski0",180,20,200);
-  m_h_mip[1]=fs->make<TH1F>("Mip_Ski1","Mip_Ski1",180,20,200);
-  m_h_mip[2]=fs->make<TH1F>("Mip_Ski2","Mip_Ski2",180,20,200);
-  m_h_mip[3]=fs->make<TH1F>("Mip_Ski3","Mip_Ski3",180,20,200);
+
+  m_h_mip[0]=fs->make<TH1F>("Mip_Ski0","Mip_Ski0",400,-100,300);
+  m_h_mip[1]=fs->make<TH1F>("Mip_Ski1","Mip_Ski1",400,-100,300);
+  m_h_mip[2]=fs->make<TH1F>("Mip_Ski2","Mip_Ski2",400,-100,300);
+  m_h_mip[3]=fs->make<TH1F>("Mip_Ski3","Mip_Ski3",400,-100,300);
   m_h_hgSum=fs->make<TH1F>("HighGainSum","HighGainSum",5000,0,50000);
   m_h_lgSum=fs->make<TH1F>("LowGainSum","LowGainSum",5000,0,50000);
   m_h_enSum=fs->make<TH1F>("EnergySum","EnergySum",5000,0,50000);
-  
+
+
   std::ostringstream os( std::ostringstream::ate );
   TH2F* htmp2;
   TH1F* htmp1;
@@ -118,7 +120,7 @@ void RecHitPlotter::beginJob()
 	  skiId=ib*HGCAL_TB_GEOMETRY::N_SKIROC_PER_HEXA+(HGCAL_TB_GEOMETRY::N_SKIROC_PER_HEXA-iski)%HGCAL_TB_GEOMETRY::N_SKIROC_PER_HEXA+1;
 	else
 	  skiId = ib*HGCAL_TB_GEOMETRY::N_SKIROC_PER_HEXA+(HGCAL_TB_GEOMETRY::N_SKIROC_PER_HEXA-iski%HGCAL_TB_GEOMETRY::N_SKIROC_PER_HEXA);
-	HGCalTBElectronicsId eid(skiId,ichan);      
+	HGCalTBElectronicsId eid(skiId,ichan);
 	if( !essource_.emap_.existsEId(eid.rawId()) ) continue;
 	os.str("");
 	os << "HighGain_HexaBoard" << ib << "_Chip" << iski << "_Channel" << ichan  ;
@@ -144,7 +146,7 @@ void RecHitPlotter::analyze(const edm::Event& event, const edm::EventSetup& setu
 
   edm::Handle<HGCalTBRecHitCollection> hits;
   event.getByToken(m_HGCalTBRecHitCollection, hits);
-  
+
   std::map<int,TH2Poly*>  polyMapHG;
   std::map<int,TH2Poly*>  polyMapLG;
   if( m_eventPlotter ){
@@ -168,7 +170,7 @@ void RecHitPlotter::analyze(const edm::Event& event, const edm::EventSetup& setu
       polyMapLG.insert( std::pair<int,TH2Poly*>(ib,h) );
     }
   }
-  
+
   float energyHighSum(0),energyLowSum(0),energySum(0);
   for( auto hit : *hits ){
     HGCalTBElectronicsId eid( essource_.emap_.detId2eid( hit.id().rawId() ) );
@@ -179,14 +181,16 @@ void RecHitPlotter::analyze(const edm::Event& event, const edm::EventSetup& setu
       energyHighSum+=hit.energyHigh();
       energyLowSum+=hit.energyLow();
       energySum+=hit.energy();
-      //if( hit.energyHigh()<m_mipThreshold )
-      //	m_h_mip[(4-(eid.iskiroc()-1))%4]->Fill(hit.energyHigh());
+      if(1) //hit.energyHigh()<m_mipThreshold
+      m_h_mip[(4-(eid.iskiroc()-1))%4]->Fill(hit.energyHigh());
     }
     if(m_eventPlotter){
       if(!IsCellValid.iu_iv_valid(hit.id().layer(),hit.id().sensorIU(),hit.id().sensorIV(),hit.id().iu(),hit.id().iv(),m_sensorsize))  continue;
       CellCentreXY=TheCell.GetCellCentreCoordinatesForPlots(hit.id().layer(),hit.id().sensorIU(),hit.id().sensorIV(),hit.id().iu(),hit.id().iv(),m_sensorsize);
       double iux = (CellCentreXY.first < 0 ) ? (CellCentreXY.first + HGCAL_TB_GEOMETRY::DELTA) : (CellCentreXY.first - HGCAL_TB_GEOMETRY::DELTA) ;
       double iuy = (CellCentreXY.second < 0 ) ? (CellCentreXY.second + HGCAL_TB_GEOMETRY::DELTA) : (CellCentreXY.second - HGCAL_TB_GEOMETRY::DELTA);
+
+      // std:cout<<iux<<"\t"<<iuy<<
       polyMapHG[ (eid.iskiroc()-1)/HGCAL_TB_GEOMETRY::N_SKIROC_PER_HEXA ]->Fill(iux/2 , iuy, hit.energyHigh());
       polyMapLG[ (eid.iskiroc()-1)/HGCAL_TB_GEOMETRY::N_SKIROC_PER_HEXA ]->Fill(iux/2 , iuy, hit.energyLow());
     }
