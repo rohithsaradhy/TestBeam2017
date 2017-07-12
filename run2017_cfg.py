@@ -44,7 +44,7 @@ process.source = cms.Source("HGCalTBRawDataSource",
                             fileNames=cms.untracked.vstring("file:%s/HexaData_Run%04d.raw"%(options.dataFolder,options.runNumber)),
                             OutputCollectionName=cms.untracked.string("skiroc2cmsdata"),
                             NOrmBoards=cms.untracked.uint32(1),
-                            NHexaBoards=cms.untracked.uint32(5),
+NHexaBoards=cms.untracked.uint32(2),
                             NumberOf32BitsWordsPerReadOut=cms.untracked.uint32(30788)
 )
 
@@ -72,7 +72,7 @@ process.content = cms.EDAnalyzer("EventContentAnalyzer") #add process.content in
 process.rawhitproducer = cms.EDProducer("HGCalTBRawHitProducer",
                                         InputCollection=cms.InputTag("source","skiroc2cmsdata"),
                                         OutputCollectionName=cms.string("HGCALTBRAWHITS"),
-                                        ElectronicMap=cms.untracked.string("HGCal/CondObjects/data/map_CERN_Hexaboard_OneLayers_May2017.txt"),
+                                        ElectronicMap=cms.untracked.string("HGCal/CondObjects/data/map_CERN_Hexaboard_28Layers.txt"),
                                         SubtractPedestal=cms.untracked.bool(True),
                                         HighGainPedestalFileName=cms.string(pedestalHighGain),
                                         LowGainPedestalFileName=cms.string(pedestalLowGain)
@@ -80,7 +80,7 @@ process.rawhitproducer = cms.EDProducer("HGCalTBRawHitProducer",
 
 process.rawhitplotter = cms.EDAnalyzer("RawHitPlotter",
                                        InputCollection=cms.InputTag("rawhitproducer","HGCALTBRAWHITS"),
-                                       ElectronicMap=cms.untracked.string("HGCal/CondObjects/data/map_CERN_Hexaboard_OneLayers_May2017.txt"),
+                                       ElectronicMap=cms.untracked.string("HGCal/CondObjects/data/map_CERN_Hexaboard_28Layers.txt"),
                                        SensorSize=cms.untracked.int32(128),
                                        EventPlotter=cms.untracked.bool(False),
                                        SubtractCommonMode=cms.untracked.bool(False),
@@ -89,7 +89,7 @@ process.rawhitplotter = cms.EDAnalyzer("RawHitPlotter",
 
 process.pulseshapeplotter = cms.EDAnalyzer("PulseShapePlotter",
                                            InputCollection=cms.InputTag("rawhitproducer","HGCALTBRAWHITS"),
-                                           ElectronicMap=cms.untracked.string("HGCal/CondObjects/data/map_CERN_Hexaboard_OneLayers_May2017.txt"),
+                                           ElectronicMap=cms.untracked.string("HGCal/CondObjects/data/map_CERN_Hexaboard_28Layers.txt"),
                                            CommonModeThreshold=cms.untracked.double(100)
                                            )
 
@@ -97,7 +97,7 @@ process.pulseshapeplotter = cms.EDAnalyzer("PulseShapePlotter",
 
 process.recHitNtuplizer = cms.EDAnalyzer("RecHitsNtuplizer",
                                          InputCollection=cms.InputTag("rawhitproducer","HGCALTBRAWHITS"),
-                                         ElectronicMap=cms.untracked.string("HGCal/CondObjects/data/map_CERN_Hexaboard_OneLayers_May2017.txt"),
+                                         ElectronicMap=cms.untracked.string("HGCal/CondObjects/data/map_CERN_Hexaboard_28Layers.txt"),
                                          CommonModeThreshold=cms.untracked.double(100),
                                          LG2HG = cms.untracked.vdouble(10.0),
                                          TOT2LG = cms.untracked.vdouble(10.0),
@@ -113,26 +113,26 @@ process.rechitproducer = cms.EDProducer("HGCalTBRecHitProducer",
                                         TOT2LG = cms.untracked.vdouble(10.0),
                                         HighGainADCSaturation = cms.untracked.double(2000),
                                         LowGainADCSaturation = cms.untracked.double(1500),
-                                        ElectronicsMap = cms.untracked.string('HGCal/CondObjects/data/map_CERN_Hexaboard_OneLayers_May2017.txt'),
+                                        ElectronicsMap = cms.untracked.string('HGCal/CondObjects/data/map_CERN_Hexaboard_28Layers.txt'),
                                         CommonModeThreshold = cms.untracked.double(100.),
                                         KeepOnlyTimeSample3 = cms.untracked.bool(False)
                                         )
 
 process.rechitplotter = cms.EDAnalyzer("RecHitPlotter",
                                        InputCollection=cms.InputTag("rechitproducer","HGCALTBRECHITS"),
-                                       ElectronicMap=cms.untracked.string("HGCal/CondObjects/data/map_CERN_Hexaboard_OneLayers_May2017.txt"),
+                                       ElectronicMap=cms.untracked.string("HGCal/CondObjects/data/map_CERN_Hexaboard_28Layers.txt"),
                                        SensorSize=cms.untracked.int32(128),
                                        EventPlotter=cms.untracked.bool(True),
                                        MipThreshold=cms.untracked.double(200),
                                        NoiseThreshold=cms.untracked.double(25)
                                        )
 
-process.p = cms.Path( process.rawdataplotter )
+#process.p = cms.Path( process.rawdataplotter )
 #process.p = cms.Path( process.rawhitproducer*process.rawhitplotter*process.rawdataplotter )
 #process.p = cms.Path( process.rawhitproducer*process.rawhitplotter*process.pulseshapeplotter )
 #process.p = cms.Path( process.rawhitproducer*process.recHitNtuplizer )
 #process.p = cms.Path( process.rawhitproducer*process.rechitproducer)
-#process.p = cms.Path( process.rawhitproducer*process.rechitproducer*process.rechitplotter)
+process.p = cms.Path( process.rawhitproducer*process.rechitproducer*process.rechitplotter)
 
 process.end = cms.EndPath(process.output)
 
